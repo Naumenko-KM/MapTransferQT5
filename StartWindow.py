@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import sys
 
 
 class Ui_StartWindow(object):
@@ -60,3 +61,12 @@ class Ui_StartWindow(object):
         self.pushButton_3.setText(_translate("StartWindow", "..."))
         self.label.setText(_translate("StartWindow", "Path:"))
         self.label_2.setText(_translate("StartWindow", "Type:"))
+
+app = QtWidgets.QApplication(sys.argv)
+window = QtWidgets.QMainWindow()
+ui = Ui_StartWindow()
+ui.setupUi(window)
+# ui.resize(800, 524)
+ui.pushButton.clicked.connect(QtWidgets.qApp.quit)
+window.show()
+sys.exit(app.exec_())

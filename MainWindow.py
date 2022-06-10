@@ -21,6 +21,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.img_size = 512
         self.centralwidget = QtWidgets.QWidget()
         self.centralwidget.setObjectName("centralwidget")
+        self.setWindowTitle("MainWindow")
 
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(660, 60, 89, 25))
