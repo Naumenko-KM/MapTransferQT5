@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
+from stub import get_image
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -51,7 +52,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.horizontalLayout.setObjectName("horizontalLayout")
 
         file_name_0 = '20.0_49.0_vis.jpeg'
-        image_0  = QtGui.QPixmap(file_name_0)
+        # image_0  = QtGui.QPixmap(file_name_0)
+        image_0 = get_image()
+        image_0  = QtGui.QPixmap.fromImage(image_0)
         image_0 = image_0.scaled(self.img_size, self.img_size, QtCore.Qt.KeepAspectRatio)
         self.label_img_0 = QtWidgets.QLabel(self.layoutWidget)
         self.label_img_0.setObjectName("label_image_0")
@@ -61,7 +64,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.horizontalLayout.addWidget(self.label_img_0)
 
         file_name_1 = '20.0_49.0_inf.jpeg'
-        image_1  = QtGui.QPixmap(file_name_1)
+        # image_1  = QtGui.QPixmap(file_name_1)
+        image_1 = get_image()
+        image_1  = QtGui.QPixmap.fromImage(image_1)
         image_1 = image_1.scaled(self.img_size, self.img_size, QtCore.Qt.KeepAspectRatio)
         self.label_img_1 = QtWidgets.QLabel(self.layoutWidget)
         self.label_img_1.setObjectName("label_image_1")
@@ -91,11 +96,12 @@ class MainWindow(QtWidgets.QMainWindow):
         QtCore.QMetaObject.connectSlotsByName(self)
         
 
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    # window = QtWidgets.QMainWindow()
+    ui = MainWindow()
+    # ui.resize(800, 524)
 
-app = QtWidgets.QApplication(sys.argv)
-# window = QtWidgets.QMainWindow()
-ui = MainWindow()
-# ui.resize(800, 524)
-ui.pushButton_2.clicked.connect(QtWidgets.qApp.quit)
-ui.show()
-sys.exit(app.exec_())
+    ui.pushButton_2.clicked.connect(QtWidgets.qApp.quit)
+    ui.show()
+    sys.exit(app.exec_())
