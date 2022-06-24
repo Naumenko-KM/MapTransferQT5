@@ -62,6 +62,7 @@ class Ui_StartWindow(object):
         self.label.setText(_translate("StartWindow", "Path:"))
         self.label_2.setText(_translate("StartWindow", "Type:"))
 
+
 app = QtWidgets.QApplication(sys.argv)
 window = QtWidgets.QMainWindow()
 ui = Ui_StartWindow()
