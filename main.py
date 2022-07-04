@@ -44,13 +44,14 @@ class Ui_StartWindow(QtWidgets.QMainWindow):
         self.comboBox.setObjectName("comboBox")
         self.verticalLayout_2.addWidget(self.comboBox)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
-        
+
         self.retranslateUi(StartWindow)
         QtCore.QMetaObject.connectSlotsByName(StartWindow)
 
     def retranslateUi(self, StartWindow):
         _translate = QtCore.QCoreApplication.translate
-        StartWindow.setWindowTitle(_translate("StartWindow", "Выберите изображение"))
+        StartWindow.setWindowTitle(_translate("StartWindow",
+                                              "Выберите изображение"))
         self.pushButton.setText(_translate("StartWindow", "Выход"))
         self.pushButton_2.setText(_translate("StartWindow", "Запуск"))
         self.pushButton_3.setText(_translate("StartWindow", "..."))
