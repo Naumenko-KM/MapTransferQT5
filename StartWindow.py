@@ -55,19 +55,20 @@ class Ui_StartWindow(object):
 
     def retranslateUi(self, StartWindow):
         _translate = QtCore.QCoreApplication.translate
-        StartWindow.setWindowTitle(_translate("StartWindow", "Choose image"))
-        self.pushButton.setText(_translate("StartWindow", "Quit"))
-        self.pushButton_2.setText(_translate("StartWindow", "Run"))
+        StartWindow.setWindowTitle(_translate("StartWindow", "Выберите изображение"))
+        self.pushButton.setText(_translate("StartWindow", "Выход"))
+        self.pushButton_2.setText(_translate("StartWindow", "Запуск"))
         self.pushButton_3.setText(_translate("StartWindow", "..."))
-        self.label.setText(_translate("StartWindow", "Path:"))
-        self.label_2.setText(_translate("StartWindow", "Type:"))
+        self.label.setText(_translate("StartWindow", "Путь:"))
+        self.label_2.setText(_translate("StartWindow", "Тип:"))
 
 
-app = QtWidgets.QApplication(sys.argv)
-window = QtWidgets.QMainWindow()
-ui = Ui_StartWindow()
-ui.setupUi(window)
-# ui.resize(800, 524)
-ui.pushButton.clicked.connect(QtWidgets.qApp.quit)
-window.show()
-sys.exit(app.exec_())
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    window = QtWidgets.QMainWindow()
+    ui = Ui_StartWindow()
+    ui.setupUi(window)
+    # ui.resize(800, 524)
+    ui.pushButton.clicked.connect(QtWidgets.qApp.quit)
+    window.show()
+    sys.exit(app.exec_())

@@ -84,15 +84,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.setCentralWidget(self.centralwidget)
 
-        self.menuBar = QtWidgets.QMenuBar()
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 800, 22))
-        self.menuBar.setObjectName("menuBar")
-        self.menuCreate = QtWidgets.QMenu(self.menuBar)
-        self.menuCreate.setObjectName("menuCreate")
-        self.menuCreate.setTitle("Change mode")
-        self.setMenuBar(self.menuBar)
-        self.menuCreate.addSeparator()
-        self.menuBar.addAction(self.menuCreate.menuAction())
+        # self.menuBar = QtWidgets.QMenuBar()
+        # self.menuBar.setGeometry(QtCore.QRect(0, 0, 800, 22))
+        # self.menuBar.setObjectName("menuBar")
+        # self.menuCreate = QtWidgets.QMenu(self.menuBar)
+        # self.menuCreate.setObjectName("menuCreate")
+        # self.menuCreate.setTitle("Change mode")
+        # self.setMenuBar(self.menuBar)
+        # self.menuCreate.addSeparator()
+        # self.menuBar.addAction(self.menuCreate.menuAction())
 
         QtCore.QMetaObject.connectSlotsByName(self)
 
@@ -103,6 +103,6 @@ if __name__ == '__main__':
     ui = MainWindow()
     # ui.resize(800, 524)
 
-    ui.pushButton_2.clicked.connect(QtWidgets.qApp.quit)
+    # ui.pushButton_2.clicked.connect(QtWidgets.qApp.quit)
     ui.show()
     sys.exit(app.exec_())
