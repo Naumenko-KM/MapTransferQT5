@@ -17,6 +17,7 @@ class Ui_StartWindow(QtWidgets.QMainWindow):
         self.pushButton_2 = QtWidgets.QPushButton(StartWindow)
         self.pushButton_2.setGeometry(QtCore.QRect(320, 250, 80, 25))
         self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_2.clicked.connect(StartWindow.close)
         self.pushButton_3 = QtWidgets.QPushButton(StartWindow)
         self.pushButton_3.setGeometry(QtCore.QRect(360, 60, 41, 21))
         self.pushButton_3.setObjectName("pushButton_3")
@@ -59,7 +60,6 @@ class Ui_StartWindow(QtWidgets.QMainWindow):
         self.label_2.setText(_translate("StartWindow", "Тип:"))
 
     def next_window(self):
-        self.close()
         self.new_window = MainWindow()
         self.new_window.show()
 
