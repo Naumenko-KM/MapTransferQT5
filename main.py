@@ -1,67 +1,80 @@
 import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PIL import Image, ImageQt
+import numpy as np
 
-from MainWindow import MainWindow
-from StartWindow import Ui_StartWindow
 from stub import get_image
+from gans import generate_image
 
 
-class Ui_StartWindow(QtWidgets.QMainWindow):
+class StartWindow(QtWidgets.QMainWindow):
     def setupUi(self, StartWindow):
         StartWindow.setObjectName("StartWindow")
         StartWindow.resize(452, 300)
+        StartWindow.setWindowTitle("Выберите изображение")
+
         self.pushButton = QtWidgets.QPushButton(StartWindow)
         self.pushButton.setGeometry(QtCore.QRect(40, 250, 80, 25))
         self.pushButton.setObjectName("pushButton")
+        self.pushButton.setText("Выход")
+        self.pushButton.clicked.connect(QtWidgets.qApp.quit)
+
         self.pushButton_2 = QtWidgets.QPushButton(StartWindow)
         self.pushButton_2.setGeometry(QtCore.QRect(320, 250, 80, 25))
         self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_2.setText("Запуск")
+        self.pushButton_2.clicked.connect(self.on_clicled)
         self.pushButton_2.clicked.connect(StartWindow.close)
+
         self.pushButton_3 = QtWidgets.QPushButton(StartWindow)
         self.pushButton_3.setGeometry(QtCore.QRect(360, 60, 41, 21))
         self.pushButton_3.setObjectName("pushButton_3")
+        self.pushButton_3.setText("...")
+
         self.widget = QtWidgets.QWidget(StartWindow)
         self.widget.setGeometry(QtCore.QRect(30, 30, 311, 141))
         self.widget.setObjectName("widget")
+
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.widget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
+
         self.label = QtWidgets.QLabel(self.widget)
         self.label.setObjectName("label")
-        self.verticalLayout.addWidget(self.label)
+        self.label.setText("Путь:")
         self.label_2 = QtWidgets.QLabel(self.widget)
         self.label_2.setObjectName("label_2")
-        self.verticalLayout.addWidget(self.label_2)
-        self.horizontalLayout.addLayout(self.verticalLayout)
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.label_2.setText("Тип:")
+
         self.lineEdit = QtWidgets.QLineEdit(self.widget)
         self.lineEdit.setObjectName("lineEdit")
-        self.verticalLayout_2.addWidget(self.lineEdit)
         self.comboBox = QtWidgets.QComboBox(self.widget)
         self.comboBox.setObjectName("comboBox")
+
+        self.verticalLayout.addWidget(self.label)
+        self.verticalLayout.addWidget(self.label_2)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.verticalLayout_2.addWidget(self.lineEdit)
         self.verticalLayout_2.addWidget(self.comboBox)
+        self.horizontalLayout.addLayout(self.verticalLayout)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
 
-        self.retranslateUi(StartWindow)
         QtCore.QMetaObject.connectSlotsByName(StartWindow)
 
-    def retranslateUi(self, StartWindow):
-        _translate = QtCore.QCoreApplication.translate
-        StartWindow.setWindowTitle(_translate("StartWindow",
-                                              "Выберите изображение"))
-        self.pushButton.setText(_translate("StartWindow", "Выход"))
-        self.pushButton_2.setText(_translate("StartWindow", "Запуск"))
-        self.pushButton_3.setText(_translate("StartWindow", "..."))
-        self.label.setText(_translate("StartWindow", "Путь:"))
-        self.label_2.setText(_translate("StartWindow", "Тип:"))
-
-    def next_window(self):
+    def on_clicled(self):
+        path = self.lineEdit.text()
+        self.save_path(path)
         self.new_window = MainWindow()
         self.new_window.show()
+
+    @staticmethod
+    def save_path(path):
+        with open('temp.txt', 'w') as f:
+            f.write(str(path))
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -73,28 +86,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.img_size = 512
         self.centralwidget = QtWidgets.QWidget()
         self.centralwidget.setObjectName("centralwidget")
-        self.setWindowTitle("MainWindow")
+        self.setWindowTitle("Результаты работы")
 
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(660, 60, 89, 25))
+        self.pushButton.setGeometry(QtCore.QRect(622, 60, 150, 25))
         self.pushButton.setObjectName("pushButton")
-        self.pushButton.setText("New image")
+        self.pushButton.setText("Новое изображение")
+        self.pushButton.clicked.connect(self.on_clicled_new_image)
+        self.pushButton.clicked.connect(self.close)
 
         self.layoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.layoutWidget.setGeometry(QtCore.QRect(40, 110, 731, 341))
         self.layoutWidget.setObjectName("layoutWidget")
+
         self.pushButton_2 = QtWidgets.QPushButton(self.layoutWidget)
         self.pushButton_2.setObjectName("pushButton_2")
-        self.pushButton_2.setText("Quit")
+        self.pushButton_2.setText("Выход")
         self.pushButton_2.clicked.connect(QtWidgets.qApp.quit)
+
         self.pushButton_3 = QtWidgets.QPushButton(self.layoutWidget)
         self.pushButton_3.setObjectName("pushButton_3")
-        self.pushButton_3.setText("Save")
-
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(40, 60, 281, 17))
-        self.label.setObjectName("label")
-        self.label.setText("Filename: Example_1.png")
+        self.pushButton_3.setText("Сохранить")
+        self.pushButton_3.clicked.connect(self.on_clicked_save_image)
 
         self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -102,9 +115,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
 
-        file_name_0 = '20.0_49.0_vis.jpeg'
-        image_0 = get_image()
-        image_0 = QtGui.QPixmap.fromImage(image_0)
+        image_0_path = self.get_original_image_path()
+        image_0 = QtGui.QPixmap(image_0_path)
         image_0 = image_0.scaled(self.img_size, self.img_size,
                                  QtCore.Qt.KeepAspectRatio)
         self.label_img_0 = QtWidgets.QLabel(self.layoutWidget)
@@ -112,10 +124,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_img_0.setPixmap(image_0)
         self.label_img_0.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.horizontalLayout.addWidget(self.label_img_0)
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(40, 60, 281, 17))
+        self.label.setObjectName("label")
+        self.label.setText(f"Файл: {self.path_to_image_0}")
 
-        file_name_1 = '20.0_49.0_inf.jpeg'
-        image_1 = get_image()
+        image_1 = self.get_generated_image()
         image_1 = QtGui.QPixmap.fromImage(image_1)
         image_1 = image_1.scaled(self.img_size, self.img_size,
                                  QtCore.Qt.KeepAspectRatio)
@@ -124,6 +138,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_img_1.setPixmap(image_1)
         self.label_img_1.setAlignment(QtCore.Qt.AlignCenter)
 
+        self.horizontalLayout.addWidget(self.label_img_0)
         self.horizontalLayout.addWidget(self.label_img_1)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
@@ -134,43 +149,44 @@ class MainWindow(QtWidgets.QMainWindow):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.setCentralWidget(self.centralwidget)
 
-        self.menuBar = QtWidgets.QMenuBar()
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 800, 22))
-        self.menuBar.setObjectName("menuBar")
-        self.menuCreate = QtWidgets.QMenu(self.menuBar)
-        self.menuCreate.setObjectName("menuCreate")
-        self.menuCreate.setTitle("Change mode")
-        self.setMenuBar(self.menuBar)
-        self.menuCreate.addSeparator()
-        self.menuBar.addAction(self.menuCreate.menuAction())
+        # self.menuBar = QtWidgets.QMenuBar()
+        # self.menuBar.setGeometry(QtCore.QRect(0, 0, 800, 22))
+        # self.menuBar.setObjectName("menuBar")
+        # self.menuCreate = QtWidgets.QMenu(self.menuBar)
+        # self.menuCreate.setObjectName("menuCreate")
+        # self.menuCreate.setTitle("Change mode")
+        # self.setMenuBar(self.menuBar)
+        # self.menuCreate.addSeparator()
+        # self.menuBar.addAction(self.menuCreate.menuAction())
 
         QtCore.QMetaObject.connectSlotsByName(self)
+
+    def get_generated_image(self):
+        x = generate_image(self.path_to_image_0)
+        img = Image.fromarray(x, mode="RGB")
+        self.image_1 = img
+        img = ImageQt.ImageQt(img)
+        return img
+
+    def get_original_image_path(self):
+        with open('temp.txt') as f:
+            self.path_to_image_0 = f.readlines()[-1]
+        return self.path_to_image_0
+
+    def on_clicked_save_image(self):
+        self.image_1.save(f'{self.path_to_image_0[:-9]}_inf_generated.jpeg')
+
+    def on_clicled_new_image(self):
+        self.window = QtWidgets.QMainWindow()
+        self.ui = StartWindow()
+        self.ui.setupUi(self.window)
+        self.window.show()
 
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = QtWidgets.QMainWindow()
-    ui = Ui_StartWindow()
+    ui = StartWindow()
     ui.setupUi(window)
-    ui.pushButton.clicked.connect(QtWidgets.qApp.quit)
-    ui.pushButton_2.clicked.connect(ui.next_window)
-    window.show()
-    sys.exit(app.exec_())
-
-# if __name__ == '__main__':
-#     app = QtWidgets.QApplication(sys.argv)
-#     window = Ui_StartWindow()
-#     # window.pushButton.clicked.connect(window.close()
-#     window.pushButton.clicked.connect(QtWidgets.qApp.quit)
-#     window.show()
-
-#     sys.exit(app.exec_())
-
-    app = QtWidgets.QApplication(sys.argv)
-    window = QtWidgets.QMainWindow()
-    ui = Ui_StartWindow()
-    ui.setupUi(window)
-    # ui.resize(800, 524)
-    ui.pushButton.clicked.connect(QtWidgets.qApp.quit)
     window.show()
     sys.exit(app.exec_())

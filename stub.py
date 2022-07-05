@@ -8,6 +8,7 @@ def get_image():
     x = np.tile(linspace, (720, 1))
     # print(x[0])
     x = np.repeat(x[:, :, np.newaxis], 3, axis=2)
+    # print(x.shape)
     # x = x[:, :, np.newaxis]
     # x = np.concatenate((x,x,x), axis=2)
 
