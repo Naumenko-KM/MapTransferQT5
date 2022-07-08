@@ -21,7 +21,7 @@ def generate_image(path: str) -> np.array:
     return img_1
 
 
-def img_to_batch(img: Image.Image) -> np.array:
+def img_to_batch(img: Image.Image) -> tuple((np.array, tuple)):
     """
     Return batch of image's crops and image size
     [height, width, 3] -> [B, 256, 256, 3]
