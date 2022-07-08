@@ -4,7 +4,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PIL import Image, ImageQt
 import numpy as np
 
-from stub import get_image
 from gans import generate_image
 
 
@@ -127,7 +126,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(40, 60, 281, 17))
         self.label.setObjectName("label")
-        self.label.setText(f"Файл: {self.path_to_image_0}")
+        # self.label.setText(f"Файл: {self.path_to_image_0}")
+        self.label.setText("Файл: {}".format(self.path_to_image_0))
 
         image_1 = self.get_generated_image()
         image_1 = QtGui.QPixmap.fromImage(image_1)
@@ -174,7 +174,8 @@ class MainWindow(QtWidgets.QMainWindow):
         return self.path_to_image_0
 
     def on_clicked_save_image(self):
-        self.image_1.save(f'{self.path_to_image_0[:-9]}_inf_generated.jpeg')
+        # self.image_1.save(f'{self.path_to_image_0[:-9]}_inf_generated.jpeg')
+        self.image_1.save('{}_inf_generated.jpeg'.format(self.path_to_image_0[:-9]))
 
     def on_clicled_new_image(self):
         self.window = QtWidgets.QMainWindow()
@@ -184,6 +185,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 if __name__ == '__main__':
+    print(12345)
     app = QtWidgets.QApplication(sys.argv)
     window = QtWidgets.QMainWindow()
     ui = StartWindow()
