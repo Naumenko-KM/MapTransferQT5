@@ -56,9 +56,9 @@ def stack_batch_v(h_batch, size):
     return v_stacked
 
 
-def generate_batch(batch):
+def generate_batch(batch, batch_size=64):
     """
-    Return generated batch
+    Return generated cropped image
     """
     model = Generator()
     model.to(DEVICE)
@@ -67,14 +67,23 @@ def generate_batch(batch):
     model.eval()
     batch = torch.Tensor(batch).to(DEVICE)
     batch = batch.permute(0, 3, 1, 2)
-    y_fake = model(batch)
+
+    y_fake = model(batch[:batch_size])
+    for i in range(1, batch.shape[0]//batch_size + 1):
+        y_fake_tmp = model(batch[i*batch_size:(i+1)*batch_size])
+        y_fake = torch.cat((y_fake, y_fake_tmp), 0)
+        print('y_fake shape:', y_fake.shape)
     y_fake = y_fake.permute(0, 2, 3, 1)
     y_fake = y_fake.detach().cpu().numpy()
+    y_fake = (y_fake * 255).astype(np.uint8)
     return y_fake
 
 
 if __name__ == "__main__":
     path = '20.0_49.0_vis.jpeg'
-    Image.open(path)
     y = generate_image(path)
+    # y = Image.open(path)
+    # y = np.array(y)
+    print(y.shape)
     plt.imshow(y)
+    plt.show()
