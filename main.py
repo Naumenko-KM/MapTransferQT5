@@ -114,8 +114,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
 
-        image_0_path = self.get_original_image_path()
-        image_0 = QtGui.QPixmap(image_0_path)
+        image_0 = self.get_original_image()
+        # image_0 = QtGui.QPixmap.fromImage(image_0)
+        image_0 = QtGui.QPixmap(self.path_to_image_0)
+        image_0 = image_0.copy(0, 0, self.img_shape, self.img_shape)
         image_0 = image_0.scaled(self.img_size, self.img_size,
                                  QtCore.Qt.KeepAspectRatio)
         self.label_img_0 = QtWidgets.QLabel(self.layoutWidget)
@@ -126,13 +128,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(40, 60, 281, 17))
         self.label.setObjectName("label")
-        self.label.setText(f"Файл: {self.path_to_image_0}")
-        # self.label.setText("Файл: {}".format(self.path_to_image_0))
+        # self.label.setText(f"Файл: {self.path_to_image_0}")
+        self.label.setText("Файл: {}".format(self.path_to_image_0))
 
         image_1 = self.get_generated_image()
         image_1 = QtGui.QPixmap.fromImage(image_1)
         image_1 = image_1.scaled(self.img_size, self.img_size,
                                  QtCore.Qt.KeepAspectRatio)
+
         self.label_img_1 = QtWidgets.QLabel(self.layoutWidget)
         self.label_img_1.setObjectName("label_image_1")
         self.label_img_1.setPixmap(image_1)
@@ -163,19 +166,34 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def get_generated_image(self):
         x = generate_image(self.path_to_image_0)
+        max_shape = min(x.shape[:2])
+        x = x[:max_shape, :max_shape, :]
         img = Image.fromarray(x, mode="RGB")
+        img_shape = min(img.size)
+        img = img.crop((0, 0, img_shape, img_shape))
+        img = img.resize((self.img_size, self.img_size))
         self.image_1 = img
+        print(img.size, type(img))
         img = ImageQt.ImageQt(img)
         return img
 
-    def get_original_image_path(self):
+    def get_original_image(self):
+        # 20.0_49.0_vis.jpeg
         with open('temp.txt') as f:
             self.path_to_image_0 = f.readlines()[-1]
-        return self.path_to_image_0
+        img = Image.open(self.path_to_image_0)
+        img.load()
+        self.img_shape = min(img.size)
+        img = img.crop((0, 0, self.img_shape, self.img_shape))
+        img = img.resize((self.img_size, self.img_size))
+        print(img.size, type(img), img.mode)
+        # img.show()
+        img = ImageQt.ImageQt(img)
+        return img
 
     def on_clicked_save_image(self):
-        self.image_1.save(f'{self.path_to_image_0[:-9]}_inf_generated.jpeg')
-        # self.image_1.save('{}_inf_generated.jpeg'.format(self.path_to_image_0[:-9]))
+        # self.image_1.save(f'{self.path_to_image_0[:-9]}_inf_generated.jpeg')
+        self.image_1.save('{}_inf_generated.jpeg'.format(self.path_to_image_0[:-9]))
 
     def on_clicled_new_image(self):
         self.window = QtWidgets.QMainWindow()

@@ -65,17 +65,21 @@ def generate_batch(batch, batch_size=64):
     checkpoint = torch.load('gen.pth', map_location=DEVICE)
     model.load_state_dict(checkpoint["state_dict"])
     model.eval()
+    batch = batch / 255
     batch = torch.Tensor(batch).to(DEVICE)
     batch = batch.permute(0, 3, 1, 2)
+    with torch.no_grad():
+        y_fake = model(batch[:batch_size])
+        for i in range(1, batch.shape[0]//batch_size + 1):
+            y_fake_tmp = model(batch[i*batch_size:(i+1)*batch_size])
+            y_fake = torch.cat((y_fake, y_fake_tmp), 0)
+            print(y_fake.shape)
 
-    y_fake = model(batch[:batch_size])
-    for i in range(1, batch.shape[0]//batch_size + 1):
-        y_fake_tmp = model(batch[i*batch_size:(i+1)*batch_size])
-        y_fake = torch.cat((y_fake, y_fake_tmp), 0)
-        print('y_fake shape:', y_fake.shape)
     y_fake = y_fake.permute(0, 2, 3, 1)
     y_fake = y_fake.detach().cpu().numpy()
+    # print(y_fake)
     y_fake = (y_fake * 255).astype(np.uint8)
+    y_fake[:, :, :, 1:] = 0
     return y_fake
 
 
