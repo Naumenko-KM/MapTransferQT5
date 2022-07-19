@@ -11,10 +11,12 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 def generate_image(path: str, mode: int) -> np.array:
     """
-    Open image, feed it to generator.
-    - path - path to image
-    - mode - [0, 1, 2] -> [ifrared, win-sum, sum-win]
-    Return generated image in numpy array [height, width, 3]
+    Open image, generated new image, depends on mode.
+    Arguments:
+        path: path to image
+        mode: 0 - ifrared, 1 - win-sum, 2 - sum-win
+    Returns:
+        generated image in numpy array [height, width, 3]
     """
     img_0 = Image.open(path)
     img_0_cropped, img_size = crop_image(img_0)
@@ -30,8 +32,13 @@ def generate_image(path: str, mode: int) -> np.array:
 
 def crop_image(img: Image.Image) -> tuple((np.array, tuple)):
     """
-    Return cropped image and image size
-    [height, width, 3] -> [B, 256, 256, 3], (height//256, width//256)
+    Crop image and create batch
+    [height, width, 3] -> [B, 256, 256, 3]
+    Arguments:
+        img: PIL Image [height, width, 3]
+    Returns:
+        batch: [B, 256, 256, 3]
+        crops_counts: count of crops to restore image (height//256, width//256)
     """
     batch = []
     for x in range(0, img.size[0]-256, 256):
@@ -44,9 +51,21 @@ def crop_image(img: Image.Image) -> tuple((np.array, tuple)):
 
 def uncrop_image(batch: np.array, img_size: tuple) -> np.array:
     """
-    Return image from batch of crops
+    Gather image from batch of crops
     [B, 256, 256, 3] -> [height, width, 3]
+    Arguments:
+        batch: [B, 256, 256, 3]
+        crops_counts: count of crops (height//256, width//256)
+    Returns:
+        img: [height, width, 3]
     """
+
+    def stack_batch_v(h_batch, size):
+        v_stacked = h_batch[0]
+        for i in range(1, size):
+            v_stacked = np.vstack((v_stacked, h_batch[i]))
+        return v_stacked
+
     batch = batch.reshape((img_size[0], img_size[1], batch.shape[1],
                            batch.shape[2], batch.shape[3]))
     stacked = stack_batch_v(batch[0], img_size[1])
@@ -56,16 +75,14 @@ def uncrop_image(batch: np.array, img_size: tuple) -> np.array:
     return stacked
 
 
-def stack_batch_v(h_batch, size):
-    v_stacked = h_batch[0]
-    for i in range(1, size):
-        v_stacked = np.vstack((v_stacked, h_batch[i]))
-    return v_stacked
-
-
 def generate_image_vis2inf(batch, batch_size=64) -> np.array:
     """
-    Return generated cropped image
+    Generate infrared batch from visible batch of cropped image
+    Arguments:
+        batch: [B, 256, 256, 3]
+        batch_size: batch size to feed to model, depends on DEVICE RAM
+    Returns:
+        y_fake: generated batch [B, 256, 256, 3]
     """
     model = Generator()
     model.to(DEVICE)
@@ -92,16 +109,35 @@ def generate_image_vis2inf(batch, batch_size=64) -> np.array:
 
 
 def generate_image_sum2win(batch, batch_size=64) -> np.array:
-    pass
+    """
+    Generate winter batch from summer batch of cropped image
+    Arguments:
+        batch: [B, 256, 256, 3]
+        batch_size: batch size to feed to model, depends on DEVICE RAM
+    Returns:
+        y_fake: generated batch [B, 256, 256, 3]
+    """
+    # TODO
+    return batch
 
 
 def generate_image_win2sum(batch, batch_size=64) -> np.array:
-    pass
+    """
+    Generate summer batch from winter batch of cropped image
+    Arguments:
+        batch: [B, 256, 256, 3]
+        batch_size: batch size to feed to model, depends on DEVICE RAM
+    Returns:
+        y_fake: generated batch [B, 256, 256, 3]
+    """
+    # TODO
+    return batch
 
 
 if __name__ == "__main__":
     path = '20.0_49.0_vis.jpeg'
-    y = generate_image(path)
+    mode = 0
+    y = generate_image(path, mode)
     # y = Image.open(path)
     # y = np.array(y)
     print(y.shape)
