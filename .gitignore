@@ -1,6 +1,7 @@
 test/
 example.py
 gen.pth
+vgg19-dcbb9e9d.pth
 .qt_for_python/
 .ipynb_checkpoints/
 __pycache__/

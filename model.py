@@ -3,7 +3,7 @@ import torch
 from PIL import Image
 import matplotlib.pyplot as plt
 
-from generator import Generator
+from gan import Generator
 
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
