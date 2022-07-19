@@ -2,5 +2,5 @@ test/
 example.py
 gen.pth
 .qt_for_python/
+.ipynb_checkpoints/
 __pycache__/
-pycache/ 
