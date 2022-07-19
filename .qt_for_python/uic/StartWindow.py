@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'StartWindow.ui'
+# Form implementation generated from reading ui file '/home/mis-knaumenko/mis/Style transfer/MapTransferQT5/test/StartWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -9,7 +9,6 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import sys
 
 
 class Ui_StartWindow(object):
@@ -55,20 +54,9 @@ class Ui_StartWindow(object):
 
     def retranslateUi(self, StartWindow):
         _translate = QtCore.QCoreApplication.translate
-        StartWindow.setWindowTitle(_translate("StartWindow", "Выберите изображение"))
-        self.pushButton.setText(_translate("StartWindow", "Выход"))
-        self.pushButton_2.setText(_translate("StartWindow", "Запуск"))
+        StartWindow.setWindowTitle(_translate("StartWindow", "Choose image"))
+        self.pushButton.setText(_translate("StartWindow", "Quit"))
+        self.pushButton_2.setText(_translate("StartWindow", "Run"))
         self.pushButton_3.setText(_translate("StartWindow", "..."))
-        self.label.setText(_translate("StartWindow", "Путь:"))
-        self.label_2.setText(_translate("StartWindow", "Тип:"))
-
-
-if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    window = QtWidgets.QMainWindow()
-    ui = Ui_StartWindow()
-    ui.setupUi(window)
-    # ui.resize(800, 524)
-    ui.pushButton.clicked.connect(QtWidgets.qApp.quit)
-    window.show()
-    sys.exit(app.exec_())
+        self.label.setText(_translate("StartWindow", "Path:"))
+        self.label_2.setText(_translate("StartWindow", "Type:"))
