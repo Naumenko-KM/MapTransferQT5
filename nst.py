@@ -18,7 +18,7 @@ class CFG:
     normalization_std = torch.tensor([0.229, 0.224, 0.225]).to(device)
     content_layers = ['conv_4']
     style_layers = ['conv_1', 'conv_2', 'conv_3', 'conv_4', 'conv_5']
-    num_steps = 500
+    num_steps = 50
     style_weight = 100000
     content_weight = 1
     debug = False
@@ -250,7 +250,9 @@ class StyleTransfer(nn.Module):
             optimizer.step(closure)
         # a last correction...
         input_img.data.clamp_(0, 1)
-
+        print(type(input_img), input_img.shape)
+        input_img = input_img.detach().cpu().numpy()
+        print(type(input_img), input_img.shape)
         return input_img
 
 
@@ -260,7 +262,7 @@ if __name__ == "__main__":
     content_img = image_loader("summer.jpeg")
     style_transfer = StyleTransfer()
     output_img = style_transfer.run_style_transfer(style_img, content_img)
-
+    
     fig, axs = plt.subplots(1, 3)
     fig.set_figwidth(25)
     fig.set_figheight(10)
