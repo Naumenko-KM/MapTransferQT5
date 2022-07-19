@@ -4,7 +4,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PIL import Image, ImageQt
 import numpy as np
 
-from gans import generate_image
+from model import generate_image
 
 
 class StartWindow(QtWidgets.QMainWindow):
@@ -52,6 +52,9 @@ class StartWindow(QtWidgets.QMainWindow):
         self.lineEdit.setObjectName("lineEdit")
         self.comboBox = QtWidgets.QComboBox(self.widget)
         self.comboBox.setObjectName("comboBox")
+        self.comboBox.addItem("Видимый-инфракрасный")
+        self.comboBox.addItem("Зима-лето")
+        self.comboBox.addItem("Лето-Зима")
 
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.label_2)
@@ -66,20 +69,17 @@ class StartWindow(QtWidgets.QMainWindow):
 
     def on_clicled(self):
         path = self.lineEdit.text()
-        self.save_path(path)
-        self.new_window = MainWindow()
+        mode = self.comboBox.currentIndex()
+        self.new_window = MainWindow(path, mode)
         self.new_window.show()
-
-    @staticmethod
-    def save_path(path):
-        with open('temp.txt', 'w') as f:
-            f.write(str(path))
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, parent=None):
-        QtWidgets.QMainWindow.__init__(self, parent)
+    def __init__(self, path, mode):
+        QtWidgets.QMainWindow.__init__(self)
 
+        self.path_to_image_0 = path
+        self.mode = mode
         self.setObjectName("MainWindow")
         self.resize(800, 524)
         self.img_size = 512
@@ -152,20 +152,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.setCentralWidget(self.centralwidget)
 
-        # self.menuBar = QtWidgets.QMenuBar()
-        # self.menuBar.setGeometry(QtCore.QRect(0, 0, 800, 22))
-        # self.menuBar.setObjectName("menuBar")
-        # self.menuCreate = QtWidgets.QMenu(self.menuBar)
-        # self.menuCreate.setObjectName("menuCreate")
-        # self.menuCreate.setTitle("Change mode")
-        # self.setMenuBar(self.menuBar)
-        # self.menuCreate.addSeparator()
-        # self.menuBar.addAction(self.menuCreate.menuAction())
-
         QtCore.QMetaObject.connectSlotsByName(self)
 
     def get_generated_image(self):
-        x = generate_image(self.path_to_image_0)
+        x = generate_image(self.path_to_image_0, self.mode)
         max_shape = min(x.shape[:2])
         x = x[:max_shape, :max_shape, :]
         img = Image.fromarray(x, mode="RGB")
@@ -179,8 +169,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def get_original_image(self):
         # 20.0_49.0_vis.jpeg
-        with open('temp.txt') as f:
-            self.path_to_image_0 = f.readlines()[-1]
+        # with open('temp.txt') as f:
+        #     self.path_to_image_0 = f.readlines()[-1]
         img = Image.open(self.path_to_image_0)
         img.load()
         self.img_shape = min(img.size)
@@ -193,7 +183,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def on_clicked_save_image(self):
         # self.image_1.save(f'{self.path_to_image_0[:-9]}_inf_generated.jpeg')
-        self.image_1.save('{}_inf_generated.jpeg'.format(self.path_to_image_0[:-9]))
+        self.image_1.save('{}_inf_generated.jpeg'.format(
+            self.path_to_image_0[:-9]
+            ))
 
     def on_clicled_new_image(self):
         self.window = QtWidgets.QMainWindow()

@@ -9,22 +9,29 @@ from generator import Generator
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
-def generate_image(path: str) -> np.array:
+def generate_image(path: str, mode: int) -> np.array:
     """
     Open image, feed it to generator.
+    - path - path to image
+    - mode - [0, 1, 2] -> [ifrared, win-sum, sum-win]
     Return generated image in numpy array [height, width, 3]
     """
     img_0 = Image.open(path)
-    img_0_batch, img_size = img_to_batch(img_0)
-    img_1_batch = generate_batch(img_0_batch)
-    img_1 = img_from_batch(img_1_batch, img_size)
+    img_0_cropped, img_size = crop_image(img_0)
+    if mode == 0:
+        img_1_cropped = generate_image_vis2inf(img_0_cropped)
+    elif mode == 1:
+        img_1_cropped = generate_image_sum2win(img_0_cropped)
+    elif mode == 2:
+        img_1_cropped = generate_image_win2sum(img_0_cropped)
+    img_1 = uncrop_image(img_1_cropped, img_size)
     return img_1
 
 
-def img_to_batch(img: Image.Image) -> tuple((np.array, tuple)):
+def crop_image(img: Image.Image) -> tuple((np.array, tuple)):
     """
-    Return batch of image's crops and image size
-    [height, width, 3] -> [B, 256, 256, 3]
+    Return cropped image and image size
+    [height, width, 3] -> [B, 256, 256, 3], (height//256, width//256)
     """
     batch = []
     for x in range(0, img.size[0]-256, 256):
@@ -36,9 +43,10 @@ def img_to_batch(img: Image.Image) -> tuple((np.array, tuple)):
     # return np.ones((4, 256, 256, 3))
 
 
-def img_from_batch(batch: np.array, img_size: tuple) -> np.array:
+def uncrop_image(batch: np.array, img_size: tuple) -> np.array:
     """
     Return image from batch of crops
+    [B, 256, 256, 3], (height//256, width//256) -> [height, width, 3] 
     """
     batch = batch.reshape((img_size[0], img_size[1], batch.shape[1],
                            batch.shape[2], batch.shape[3]))
@@ -56,7 +64,7 @@ def stack_batch_v(h_batch, size):
     return v_stacked
 
 
-def generate_batch(batch, batch_size=64):
+def generate_image_vis2inf(batch, batch_size=64) -> np.array: 
     """
     Return generated cropped image
     """
@@ -81,6 +89,14 @@ def generate_batch(batch, batch_size=64):
     y_fake = (y_fake * 255).astype(np.uint8)
     y_fake[:, :, :, 1:] = 0
     return y_fake
+
+
+def generate_image_sum2win(batch, batch_size=64) -> np.array: 
+    pass
+
+
+def generate_image_win2sum(batch, batch_size=64) -> np.array: 
+    pass
 
 
 if __name__ == "__main__":
