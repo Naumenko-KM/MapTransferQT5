@@ -54,7 +54,7 @@ class StartWindow(QtWidgets.QMainWindow):
         self.comboBox.setObjectName("comboBox")
         self.comboBox.addItem("Видимый-инфракрасный")
         self.comboBox.addItem("Зима-лето")
-        self.comboBox.addItem("Лето-Зима")
+        self.comboBox.addItem("Лето-зима")
 
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.label_2)

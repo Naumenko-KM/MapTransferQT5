@@ -1,3 +1,4 @@
 test/
 example.py
 gen.pth
+__pycache__/
